@@ -1,0 +1,172 @@
+﻿@page "/ShareAllocations"
+@using mdl = FarmshareAdmin.Models;
+@using Newtonsoft.Json;
+@inject NavigationManager NavigationManager
+@inject Data.IFarmAllocationService FarmAllocationService
+
+<h3>Share Allocations</h3>
+<p>@statusCode</p>
+
+<ul>
+	@foreach (var item in fa.messages)
+	{
+		<div class="alert alert-@item.status" role="alert">
+			@item.content
+		</div>
+	}
+
+</ul>
+<table class="table table-bordered" style="width:100%">
+	<thead>
+		<tr>
+			<th style="width: 20%">Farm Name</th>
+			<th>Farm Id</th>
+			<th>Note</th>
+			<th>Status</th>
+			<th>Prev Year Shares Requested</th>
+			<th>Prev Year Shares Allocated</th>
+			<th>Prev Year Shares Redeemed</th>
+			<th>Prev Year Shares Paid</th>
+			<th>Cur Year Shares Invoiced</th>
+			<th>Cur Year Shares Not Invoiced</th>
+			<th>Cur Year Shares Requested</th>
+			<th>Cur Year Shares Allocated</th>
+			<th>Adjustments</th>
+			<th>Revised Shares Allocated</th>
+			<th>Approve</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in fa.items)
+		{
+			<tr>
+				<td>@item.FarmName</td>
+				<td>@item.FarmId</td>
+				<td class="classStandOutColor">@item.Note</td>
+				<td>@item.Status</td>
+				<td>@item.PrevYearSharesRequested</td>
+				<td>@item.PrevYearSharesAlloc</td>
+				<td>@item.PrevYearSharesRedeemed</td>
+				<td>@item.PrevYearSharesPaid</td>
+				<td>@item.CurYearSharesInvoiced</td>
+				<td>@item.CurYearSharesNotInvoiced</td>
+				<td>@item.CurYearSharesRequested</td>
+				<td>@item.CurYearSharesAlloc</td>
+				<td><input style="width:80px" type="number" @bind="item.SharesAdjustment" @onfocusout="@(e => AllocChanged(item))" /></td>
+				<td>@item.SharesNewAlloc</td>
+				<td><input v-if="item.Status == 'Pending'" type="checkbox" @bind="item.Approved"></td>
+				<td> <a href=#>Comments</a></td>
+			</tr>
+		}
+		<tr>
+			<td>Totals:</td>
+			<td>@fa.TotalFarms farms</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>@fa.TotalCurrentAllocations</td>
+			<td>@fa.TotalAdjustments</td>
+			<td>@fa.TotalNewAllocations</td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+<br />
+<div class="form-group row">
+	<div class="col-md-3">
+		<label for="FirstFundingAllocation" class="control-label">First Funding Allocation $</label>
+	</div>
+	<div class="col-md-2">
+		<input class="form-control" id="FirstFundingAllocation" type="number" @bind="fa.FirstFundingAllocation" />
+	</div>
+	<div class="offset-md-4 col-md-2">
+		<button class="btn btn-primary" @onclick="UpdateData">Save</button>
+	</div>
+</div>
+<div class="form-group row">
+	<div class="col-md-3">
+		<label for="SecondFundingAllocation" class="control-label">Second Funding Allocation $</label>
+	</div>
+	<div class="col-md-2">
+		<input class="form-control" id="SecondFundingAllocation" type="number" @bind="fa.SecondFundingAllocation" />
+	</div>
+</div>
+<div class="form-group row">
+	<div class="col-md-3">
+		<label for="TotalSharesToFill" class="control-label">Total Shares To Fill</label>
+	</div>
+	<div class="col-md-2">
+		<input class="form-control" id="TotalSharesToFill" value="@TotalSharesToFill" readonly />
+	</div>
+</div>
+<div class="form-group row">
+	<div class="col-md-3">
+		<label for="RemainingSharesToFill" class="control-label">Remaining Shares To Fill</label>
+	</div>
+	<div class="col-md-2">
+		<input class="form-control" id="RemainingSharesToFill" value="@RemainingSharesToFill" readonly />
+	</div>
+</div>
+
+@code {
+	Data.Vm_Farm_Allocations fa = new();
+	mdl.Anticipated_Markets ci = new();
+	string statusCode;
+	decimal TotalSharesToFill, RemainingSharesToFill;
+
+	private async Task GetData()
+	{
+		fa = await FarmAllocationService.Get();
+	}
+
+	async Task UpdateData()
+	{
+		statusCode = "Saving data";
+		await FarmAllocationService.UpdateAsync(fa);
+		if (fa.messages.Count == 0)
+		{
+			statusCode = "Refreshing data";
+			await GetData();
+		}
+		statusCode = "count: " + fa.messages.Count.ToString();
+	}
+
+	private void AllocChanged(Data.Vm_Farm_Allocation item)
+	{
+		var changeInValue = item.CurYearSharesAlloc + item.SharesAdjustment - item.SharesNewAlloc;
+		item.SharesNewAlloc = item.CurYearSharesAlloc + item.SharesAdjustment;
+		fa.TotalAdjustments += changeInValue;
+		fa.TotalNewAllocations += changeInValue;
+		RemainingSharesToFill -= changeInValue;
+	}
+
+	void CalculateTotals()
+	{
+		if (fa.ShareValue > 0)
+		{
+			TotalSharesToFill = (fa.FirstFundingAllocation + fa.SecondFundingAllocation) / fa.ShareValue;
+			RemainingSharesToFill = TotalSharesToFill - fa.TotalCurrentAllocations;
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		statusCode = "Loading";
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+
+		await GetData();
+		CalculateTotals();
+		statusCode = "";
+	}
+}
