@@ -23,7 +23,7 @@ namespace FarmshareAdmin.Utilities
         public Error(mdl.ACF_FarmshareContext context)
         {
             _context = context;
-            //logger = new Logging(_context);
+            logger = new Logging(_context);
         }
         public void logError(string referenceLocation, Exception exParm)
         {

@@ -7,6 +7,12 @@ using utl = FarmshareAdmin.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* Get the path for the domain of the web app on the server.  Server.MapPath replacement:
+    string path = Path.GetDirectoryName(builder.Environment.WebRootPath);
+ */
+/*
+ * Here's how to read configuration variables in program.cs:
+ */
 //var Environment = builder.Configuration.GetValue<string>("Environment");
 
 // Add Active Directory authentication service to the container.

@@ -1,8 +1,20 @@
 ﻿@page "/"
+@inject IConfiguration config
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Farmshare Administration</h1>
 
-Welcome to your new app.
+<span>Environment: @env</span>
+
+
+@code {
+	string env = "";
+
+	protected override void OnInitialized()
+	{
+		//  Display the working environment on the home page
+		env = config.GetValue<string>("Environment");
+	}
+}
 

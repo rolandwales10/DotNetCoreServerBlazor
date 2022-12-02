@@ -1,6 +1,7 @@
 ﻿@page "/ShareAllocations"
-@inject IJSRuntime JsRuntime
 @using mdl = FarmshareAdmin.Models;
+
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 @inject Data.IFarmAllocationService FarmAllocationService
 
@@ -120,6 +121,11 @@
 	string statusCode = "";
 	decimal TotalSharesToFill, RemainingSharesToFill;
 
+	protected override void OnInitialized()
+	{
+		statusCode = "Loading";
+	}
+
 	private async Task GetData()
 	{
 		fa = await FarmAllocationService.Get();
@@ -131,7 +137,8 @@
 		await FarmAllocationService.UpdateAsync(fa);
 		if (fa.messages.Count == 0)
 		{
-			await JsRuntime.InvokeVoidAsync("OnScrollEvent");
+			//  The compiler recommends using await.  No need to wait, so its omisison is deliberate
+			JsRuntime.InvokeVoidAsync("OnScrollEvent");
 			statusCode = "Data updated.  Refreshing data";
 			await GetData();
 			statusCode = "Data updated and refreshed";
@@ -154,11 +161,6 @@
 			TotalSharesToFill = (fa.FirstFundingAllocation + fa.SecondFundingAllocation) / fa.ShareValue;
 			RemainingSharesToFill = TotalSharesToFill - fa.TotalCurrentAllocations;
 		}
-	}
-
-	protected override void OnInitialized()
-	{
-		statusCode = "Loading";
 	}
 
 	protected override async Task OnParametersSetAsync()
