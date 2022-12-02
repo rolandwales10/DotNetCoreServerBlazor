@@ -1,4 +1,5 @@
 ﻿@page "/ShareAllocations"
+@inject IJSRuntime JsRuntime
 @using mdl = FarmshareAdmin.Models;
 @inject NavigationManager NavigationManager
 @inject Data.IFarmAllocationService FarmAllocationService
@@ -9,11 +10,10 @@
 <ul>
 	@foreach (var item in fa.messages)
 	{
-		<div class="alert alert-@item.status" role="alert">
+		<li class="alert alert-@item.status" role="alert">
 			@item.content
-		</div>
+		</li>
 	}
-
 </ul>
 <table class="table table-bordered" style="width:100%">
 	<thead>
@@ -131,10 +131,11 @@
 		await FarmAllocationService.UpdateAsync(fa);
 		if (fa.messages.Count == 0)
 		{
-			statusCode = "Refreshing data";
+			await JsRuntime.InvokeVoidAsync("OnScrollEvent");
+			statusCode = "Data updated.  Refreshing data";
 			await GetData();
+			statusCode = "Data updated and refreshed";
 		}
-		statusCode = "count: " + fa.messages.Count.ToString();
 	}
 
 	private void AllocChanged(Data.Vm_Farm_Allocation item)
