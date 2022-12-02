@@ -1,8 +1,8 @@
-using FarmshareAdmin.Data;
+//using FarmshareAdmin.Data;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
-using mdl = FarmshareAdmin.Models;
-using data = FarmshareAdmin.Data;
+//using mdl = FarmshareAdmin.Models;
+//using data = FarmshareAdmin.Data;
 using utl = FarmshareAdmin.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,15 +24,15 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddScoped<utl.Logging, utl.Logging>();
-builder.Services.AddScoped<data.UnitOfWork, data.UnitOfWork>();
-builder.Services.AddScoped<data.IFarmAllocationService, data.FarmAllocationService>();
-builder.Services.AddScoped<data.SendMail, data.SendMail>();
+//builder.Services.AddScoped<utl.Logging, utl.Logging>();
+//builder.Services.AddScoped<data.UnitOfWork, data.UnitOfWork>();
+//builder.Services.AddScoped<data.IFarmAllocationService, data.FarmAllocationService>();
+//builder.Services.AddScoped<data.SendMail, data.SendMail>();
 
-builder.Services.AddDbContext<mdl.ACF_FarmshareContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Conn"));
-});
+//builder.Services.AddDbContext<mdl.ACF_FarmshareContext>(options =>
+//{
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("Conn"));
+//});
 
 var app = builder.Build();
 

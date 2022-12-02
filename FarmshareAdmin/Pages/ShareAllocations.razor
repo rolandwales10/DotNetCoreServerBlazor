@@ -1,6 +1,5 @@
 ﻿@page "/ShareAllocations"
 @using mdl = FarmshareAdmin.Models;
-@using Newtonsoft.Json;
 @inject NavigationManager NavigationManager
 @inject Data.IFarmAllocationService FarmAllocationService
 
@@ -118,8 +117,7 @@
 
 @code {
 	Data.Vm_Farm_Allocations fa = new();
-	mdl.Anticipated_Markets ci = new();
-	string statusCode;
+	string statusCode = "";
 	decimal TotalSharesToFill, RemainingSharesToFill;
 
 	private async Task GetData()
