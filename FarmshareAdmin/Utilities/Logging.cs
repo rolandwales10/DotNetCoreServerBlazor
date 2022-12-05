@@ -1,8 +1,6 @@
 ﻿
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.IO;
 
 using mdl = FarmshareAdmin.Models;
 /*
@@ -116,6 +114,11 @@ namespace FarmshareAdmin.Utilities
             {
                 writeLog("Error in removeOldLogEntries: " + ex.ToString());
             }
+        }
+
+        ~Logging()
+        {
+            conn.Close();
         }
     }
 }

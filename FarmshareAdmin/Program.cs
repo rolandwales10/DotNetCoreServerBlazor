@@ -34,6 +34,7 @@ builder.Services.AddScoped<utl.Logging, utl.Logging>();
 builder.Services.AddScoped<data.UnitOfWork, data.UnitOfWork>();
 builder.Services.AddScoped<data.IFarmAllocationService, data.FarmAllocationService>();
 builder.Services.AddScoped<data.SendMail, data.SendMail>();
+builder.Services.AddScoped<utl.Authorization, utl.Authorization>();
 
 builder.Services.AddDbContext<mdl.ACF_FarmshareContext>(options =>
 {

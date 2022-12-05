@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject NavigationManager NavManager
+@inject Utilities.Authorization auth
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">FarmshareAdmin</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -26,6 +29,13 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async void OnInitialized()
+    {
+        if (await auth.IsAdmin()) { }
+        else
+            NavManager.NavigateTo("NotAuthorized");
+    }
 
     private void ToggleNavMenu()
     {
