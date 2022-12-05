@@ -2,8 +2,9 @@
 @using mdl = FarmshareAdmin.Models;
 
 @inject IJSRuntime JsRuntime
-@inject NavigationManager NavigationManager
+@inject NavigationManager NavManager
 @inject Data.IFarmAllocationService FarmAllocationService
+@inject Utilities.Authorization auth;
 
 <h3>Share Allocations</h3>
 <p>@statusCode</p>
@@ -121,8 +122,11 @@
 	string statusCode = "";
 	decimal TotalSharesToFill, RemainingSharesToFill;
 
-	protected override void OnInitialized()
+	protected override async void OnInitialized()
 	{
+		if (await auth.IsAdmin()) { }
+		else
+			NavManager.NavigateTo("NotAuthorized");
 		statusCode = "Loading";
 	}
 

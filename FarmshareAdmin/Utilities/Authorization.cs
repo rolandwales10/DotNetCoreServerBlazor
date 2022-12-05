@@ -1,5 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 using System.Security.Claims;
+using FarmshareAdmin.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FarmshareAdmin.Utilities
@@ -17,8 +18,8 @@ namespace FarmshareAdmin.Utilities
             bool auth = false;
             var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-
-            if (user.IsInRole("DCN-Programmers"))
+            if (user.IsInRole("AGR-FarmShare-DataEntry") || user.IsInRole("DCN-Programmers")
+                || user.IsInRole("OIT-CTS-ALL"))  //  oit-cts-all is for security and accessibility testing only.
             {
                 auth = true;
             }
