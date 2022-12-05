@@ -8,9 +8,10 @@ of all farms.  When shares are updated, related fields are also updated on the f
 like functionality, giving immediate feedback to things like remaining shares available.
 
 Software Features:
+- Active Directory authentication: Enabled in launchSettings.json and Program.cs.
+- Role based Active Directory authorization: See Utilities.Authorization and its use in pages
 - When an error is trapped, logs all inner exceptions.  See Utilities.Error
 - When data is saved, logs exceptions.  See BusinessAreaLayer.UnitOfWork
-- Role based Active Directory security. See Utilities.Authorization and its use in pages
 - Reading configuration from AppConfig.json in program.cs and also in a Razor page
 - Creating services for reuse in the application.  See Builder.AddServices in program.cs.
 - Blazor is being used to create an editable grid form in ShareAllocations.Razor.  Binding 
