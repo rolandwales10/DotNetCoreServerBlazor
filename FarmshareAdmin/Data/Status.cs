@@ -8,13 +8,12 @@ namespace FarmshareAdmin.Data
     public class Status
     {
         private readonly mdl.ACF_FarmshareContext _context;
-        private utl.Error error;
-        private utl.Logging logging;
+        private utl.Logging _logging;
 
-        public Status(mdl.ACF_FarmshareContext context)
+        public Status(mdl.ACF_FarmshareContext context, utl.Logging logging)
         {
             _context = context;
-            error = new utl.Error(_context);
+            _logging = logging;
             //logging = new utl.Logging(_context);
         }
 

@@ -15,13 +15,15 @@ namespace FarmshareAdmin.Data
         private readonly mdl.ACF_FarmshareContext _context;
         private utl.Logging _logging;
         private SendMail _sMail;
+        private Status _status;
 
-        public FarmAllocationService(mdl.ACF_FarmshareContext context, utl.Logging logging, UnitOfWork uow, SendMail sMail)
+        public FarmAllocationService(mdl.ACF_FarmshareContext context, utl.Logging logging, UnitOfWork uow, SendMail sMail, Status status)
         {
             _context = context;
             _logging = logging;
             _uow = uow;
             _sMail = sMail;
+            _status = status;
         }
         public async Task<Data.Vm_Farm_Allocations> Get()
         {
@@ -29,8 +31,7 @@ namespace FarmshareAdmin.Data
             try
             {
                 string[] excludedSt = new string[] { "Closed", "Submitted" };
-                var statusService = new Data.Status(_context);
-                var redeemableStatuses = statusService.redeemableStatuses();
+                var redeemableStatuses = _status.redeemableStatuses();
                 int previousYear = DateTime.Now.Year - 1;
                 fa.ShareValue = Data.Shares.getShareValue(_context, _logging);
                 var farms = await _context.FARMS.Where(r => r.YEAR == DateTime.Now.Year && !excludedSt.Contains(r.STATUS))

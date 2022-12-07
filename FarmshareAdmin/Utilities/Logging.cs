@@ -17,6 +17,12 @@ namespace FarmshareAdmin.Utilities
     {
         mdl.ACF_FarmshareContext _context;
         System.Data.IDbConnection conn;
+
+        /*
+         * The intent of this service is to open the data connection the first time it is used in an http request.
+         * Subsequently, the class will be constructed and it will write to the log using the connection.  The constructor will
+         * fail if the connection has already been opened in the current http request.
+         */
         public Logging(mdl.ACF_FarmshareContext context)
         {
             _context = context;
@@ -99,26 +105,17 @@ namespace FarmshareAdmin.Utilities
         {
             try
             {
-                using (var conn = _context.Database.GetDbConnection())
+                using (var cmd = conn.CreateCommand())
                 {
-                    conn.Open();
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        //  Delete entries over 14 days old
-                        cmd.CommandText = "delete from farmshare.message_log where create_time < dateadd(day, -14, getdate())";
-                        cmd.ExecuteReader();
-                    }
+                    //  Delete entries over 14 days old
+                    cmd.CommandText = "delete from farmshare.message_log where create_time < dateadd(day, -14, getdate())";
+                    cmd.ExecuteReader();
                 }
             }
             catch (Exception ex)
             {
                 writeLog("Error in removeOldLogEntries: " + ex.ToString());
             }
-        }
-
-        ~Logging()
-        {
-            conn.Close();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IConfiguration config
+@inject Utilities.Logging logging
 
 <PageTitle>Index</PageTitle>
 
@@ -15,6 +16,11 @@
 	{
 		//  Display the working environment on the home page
 		env = config.GetValue<string>("Environment");
+		Task task = Task.Run(() =>
+		{	//   Let this task run without waiting for it to finish
+			logging.removeOldLogEntries();
+		});
+
 	}
 }
 
